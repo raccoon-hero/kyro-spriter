@@ -1,16 +1,21 @@
+<div align="center">
+
 # Kyro's Spriter
 
-Cut a sprite / sticker sheet into separate images, right in the browser. No install, no upload — everything runs locally. Available in English (default) and Ukrainian — switch with **EN / УКР** in the top bar.
+**Cut sprite & sticker sheets into separate images — right in your browser.**
 
-## Run
+### [▶&nbsp; Open Kyro's Spriter](https://raccoon-hero.github.io/kyro-spriter/)
 
-Open `index.html` in a browser, or serve the folder:
+[Try it with the example sheet](https://raccoon-hero.github.io/kyro-spriter/?example&select=2) · English / Українська · No install, no upload
 
-```bash
-python -m http.server 5173
-```
+<a href="https://raccoon-hero.github.io/kyro-spriter/?example&select=2"><img src="docs/screenshot.webp" alt="Kyro's Spriter with an example sticker sheet cut into 25 stickers, one selected with its PNG and Telegram download buttons" width="100%"></a>
 
-Then visit http://localhost:5173.
+</div>
+
+Drop in a sheet (PNG with transparency works best — plain white or colored backgrounds are removed for you),
+and every sprite is found, cut out and ready to download one by one, per row, or all at once as a ZIP —
+including as **512×512 Telegram stickers**. Everything runs locally in your browser; your images never leave
+your computer. Switch the interface between English and Ukrainian with **EN / УКР** in the top bar.
 
 ## What it does
 
@@ -22,6 +27,16 @@ Then visit http://localhost:5173.
 - **Export** — every download button has a **Telegram** twin (per sprite, row, selection, all). Regular downloads keep the original size (with scale and padding); Telegram downloads are 512×512 (or longest side 512) with an optional smooth **outline** in any color, plus a live preview. PNG or WEBP; warns if a file exceeds Telegram's 512 KB limit.
 
 Press `?` in the app for all shortcuts.
+
+## Run locally
+
+Open `index.html` in a browser, or serve the folder:
+
+```bash
+python -m http.server 5173
+```
+
+Then visit http://localhost:5173. Add `?example` to the URL to open the example sheet, and `?lang=uk` for Ukrainian.
 
 ## License
 

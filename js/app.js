@@ -1622,12 +1622,19 @@
       if (r.ok) $('#btnSample').classList.remove('hidden');
     }).catch(() => {});
   }
-  $('#btnSample').addEventListener('click', async () => {
+  async function loadExample() {
     try {
-      const blob = await (await fetch('samples/example-sheet.webp')).blob();
-      loadFile(new File([blob], 'example-sheet.webp', { type: 'image/webp' }));
-    } catch { toast(t('t_cant_example'), { kind: 'warn' }); }
-  });
+      const res = await fetch('samples/example-sheet.webp');
+      if (!res.ok) throw new Error(res.statusText);
+      const blob = await res.blob();
+      await loadFile(new File([blob], 'example-sheet.webp', { type: 'image/webp' }));
+      return true;
+    } catch {
+      toast(t('t_cant_example'), { kind: 'warn' });
+      return false;
+    }
+  }
+  $('#btnSample').addEventListener('click', loadExample);
 
   /* ───────────────────────── Drop / paste ───────────────────────── */
 
@@ -1764,6 +1771,16 @@
   updateModeUI();
   updateUndoButtons();
   renderList();
+
+  // URL options: ?example opens the demo sheet, &select=N selects sprite #N, ?lang=en|uk sets the language.
+  const params = new URLSearchParams(location.search);
+  if (params.has('lang')) setLanguage(params.get('lang'));
+  if (params.has('example') && location.protocol.startsWith('http')) {
+    loadExample().then((ok) => {
+      const s = ok && S.order[(parseInt(params.get('select'), 10) || 0) - 1];
+      if (s) setSel([s.id]);
+    });
+  }
 
   // Debug/test hook
   window.SpriteCutter = { S, settings, loadFile, detect, refresh, exportCanvas, renderSprite, setTool, setSel, toBlob };
