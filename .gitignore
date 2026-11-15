@@ -3,8 +3,9 @@
 .vscode/
 .idea/
 
-# Personal sample artwork (not part of the public repo)
-samples/
+# Sample artwork: only the published example sheet is tracked
+samples/*
+!samples/example-sheet.webp
 
 # OS junk
 .DS_Store
