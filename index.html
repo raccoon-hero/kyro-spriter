@@ -1,0 +1,319 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Kyro's Spriter</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%239d6bff' stroke-width='2.2' stroke-linecap='round'%3E%3Ccircle cx='6' cy='6' r='3'/%3E%3Ccircle cx='6' cy='18' r='3'/%3E%3Cpath d='M20 4 8.1 15.9M14.5 14.5 20 20M8.1 8.1 12 12'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+<div id="app">
+
+  <!-- ───────── Top bar ───────── -->
+  <header class="topbar">
+    <div class="brand">
+      <svg viewBox="0 0 24 24" class="ic"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M20 4 8.1 15.9M14.5 14.5 20 20M8.1 8.1 12 12"/></svg>
+      <span>Kyro's <b>Spriter</b></span>
+    </div>
+    <button class="btn" id="btnOpen" data-i18n-title="open_title" title="Open image (Ctrl+O)">
+      <svg viewBox="0 0 24 24" class="ic"><path d="M12 15V3M7 8l5-5 5 5M5 21h14"/></svg><span data-i18n="open">Open</span>
+    </button>
+    <span class="file-name" id="fileName"></span>
+    <div class="spacer"></div>
+    <div class="seg" id="modeSeg" role="tablist" data-i18n-aria="mode_aria" aria-label="Cut mode">
+      <button data-mode="scan" class="on" data-i18n="mode_scan" data-i18n-title="mode_scan_title" title="Find sprites automatically by transparency">Scan</button>
+      <button data-mode="grid" data-i18n="mode_grid" data-i18n-title="mode_grid_title" title="Cut into an even grid">Grid</button>
+    </div>
+    <button class="btn primary" id="btnDetect" data-i18n-title="detect_title" title="Detect sprites again">
+      <svg viewBox="0 0 24 24" class="ic"><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M5.6 18.4l2.1-2.1M16.3 7.7l2.1-2.1"/></svg><span data-i18n="detect">Detect</span>
+    </button>
+    <div class="divider"></div>
+    <button class="icon-btn" id="btnUndo" data-i18n-title="undo_title" title="Undo (Ctrl+Z)"><svg viewBox="0 0 24 24" class="ic"><path d="M9 14 4 9l5-5"/><path d="M4 9h11a5 5 0 0 1 0 10h-3"/></svg></button>
+    <button class="icon-btn" id="btnRedo" data-i18n-title="redo_title" title="Redo (Ctrl+Shift+Z)"><svg viewBox="0 0 24 24" class="ic"><path d="m15 14 5-5-5-5"/><path d="M20 9H9a5 5 0 0 0 0 10h3"/></svg></button>
+    <div class="divider"></div>
+    <div class="seg lang" id="langSeg" data-i18n-title="lang_title" title="Language">
+      <button data-lang="en" class="on" lang="en">EN</button>
+      <button data-lang="uk" lang="uk">УКР</button>
+    </div>
+  </header>
+
+  <!-- ───────── Tool rail ───────── -->
+  <nav class="rail" id="rail" data-i18n-aria="tools_aria" aria-label="Tools">
+    <button data-tool="select" class="on" data-i18n-title="tool_select" title="Select / edit (V)"><svg viewBox="0 0 24 24" class="ic"><path d="m4 4 7 17 2.5-7.5L21 11z"/></svg></button>
+    <button data-tool="rect" data-i18n-title="tool_rect" title="Rectangle cut (R)"><svg viewBox="0 0 24 24" class="ic"><rect x="4" y="5" width="16" height="14" rx="1" stroke-dasharray="3 2.5"/></svg></button>
+    <button data-tool="poly" data-i18n-title="tool_poly" title="Polygon cut (P) — click points, Enter to finish"><svg viewBox="0 0 24 24" class="ic"><path d="M5 18 4 8l7-4 9 5-3 10z"/><circle cx="4" cy="8" r="1.4" fill="currentColor"/><circle cx="11" cy="4" r="1.4" fill="currentColor"/><circle cx="20" cy="9" r="1.4" fill="currentColor"/><circle cx="17" cy="19" r="1.4" fill="currentColor"/><circle cx="5" cy="18" r="1.4" fill="currentColor"/></svg></button>
+    <button data-tool="lasso" data-i18n-title="tool_lasso" title="Freehand lasso cut (L)"><svg viewBox="0 0 24 24" class="ic"><path d="M7 17c-3-1.5-4-4-3-6.5C5.5 6 11 4 15.5 5S22 9.5 19.5 13 11 17 8.5 15.5"/><path d="M7 17c0 2 1 3.5 3 4"/></svg></button>
+    <div class="rail-sep"></div>
+    <button data-tool="wand" data-i18n-title="tool_wand" title="Magic eraser (W) — click a background patch to remove it"><svg viewBox="0 0 24 24" class="ic"><path d="m3 21 12-12M15 4v2M19 8h2M18 5l1.5-1.5M12 7l5 5"/><path d="M20 14v2M19 15h2M7 3v2M6 4h2"/></svg></button>
+    <button data-tool="pick" data-i18n-title="tool_pick" title="Pick background color (I)"><svg viewBox="0 0 24 24" class="ic"><path d="m2 22 1-1h3l9-9M3 21v-3l9-9"/><path d="m15 6 3.4-3.4a2.1 2.1 0 1 1 3 3L18 9l.4.4a2.1 2.1 0 1 1-3 3l-3.8-3.8a2.1 2.1 0 1 1 3-3z"/></svg></button>
+    <button data-tool="pan" data-i18n-title="tool_pan" title="Pan (H) — or hold Space / middle mouse"><svg viewBox="0 0 24 24" class="ic"><path d="M18 11V6a2 2 0 0 0-4 0M14 10V4a2 2 0 0 0-4 0v2M10 10.5V6a2 2 0 0 0-4 0v8"/><path d="M18 8a2 2 0 1 1 4 0v6a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.9-6-2.4l-3.6-3.6a2 2 0 0 1 2.8-2.8L7 15"/></svg></button>
+    <div class="rail-grow"></div>
+    <button id="btnHelp" data-i18n-title="help_title" title="Shortcuts (?)"><svg viewBox="0 0 24 24" class="ic"><circle cx="12" cy="12" r="9"/><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3M12 17h.01"/></svg></button>
+  </nav>
+
+  <!-- ───────── Settings panel ───────── -->
+  <aside class="panel settings" id="settings">
+
+    <section class="sec">
+      <h3 data-i18n="sec_bg">Background removal</h3>
+      <div class="row">
+        <label class="lbl" data-i18n="color">Color</label>
+        <input type="color" id="bgColor" value="#ffffff">
+        <button class="icon-btn sm" id="btnPickTool" data-i18n-title="pick_title" title="Pick from image (I)"><svg viewBox="0 0 24 24" class="ic"><path d="m2 22 1-1h3l9-9M3 21v-3l9-9"/><path d="m15 6 3.4-3.4a2.1 2.1 0 1 1 3 3L18 9l.4.4a2.1 2.1 0 1 1-3 3l-3.8-3.8a2.1 2.1 0 1 1 3-3z"/></svg></button>
+        <button class="btn sm ghost" id="btnAutoBg" data-i18n="auto" data-i18n-title="auto_title" title="Guess from the image border">Auto</button>
+      </div>
+      <div class="field">
+        <div class="field-head"><label for="tolerance" data-i18n="tolerance" data-i18n-title="tolerance_title">Tolerance</label><output id="toleranceOut"></output></div>
+        <input type="range" id="tolerance" min="0" max="40" step="0.5">
+      </div>
+      <div class="field">
+        <div class="field-head"><label for="denoise" data-i18n="denoise" data-i18n-title="denoise_title">Noise reduction</label><output id="denoiseOut"></output></div>
+        <input type="range" id="denoise" min="0" max="3" step="1">
+      </div>
+      <div class="field">
+        <div class="field-head"><label for="smooth" data-i18n="smooth" data-i18n-title="smooth_title">Smooth outline</label><output id="smoothOut"></output></div>
+        <input type="range" id="smooth" min="0" max="8" step="1">
+      </div>
+      <div class="field">
+        <div class="field-head"><label for="softness" data-i18n-title="softness_title"><span data-i18n="softness">Edge softness</span> <span class="unit" data-i18n="softness_note">(smooth off)</span></label><output id="softnessOut"></output></div>
+        <input type="range" id="softness" min="0" max="40" step="0.5">
+      </div>
+      <div class="row">
+        <label class="lbl" for="bgMode" data-i18n="bg_mode">Remove</label>
+        <select id="bgMode">
+          <option value="edges" data-i18n="bg_mode_edges">Background touching edges</option>
+          <option value="global" data-i18n="bg_mode_global">Every matching pixel</option>
+        </select>
+      </div>
+      <div class="field">
+        <div class="field-head"><label for="outline" data-i18n="ring" data-i18n-title="ring_title">Restore border ring</label><output id="outlineOut"></output></div>
+        <input type="range" id="outline" min="0" max="24" step="1">
+      </div>
+      <label class="check"><input type="checkbox" id="defringe"> <span data-i18n="defringe">Clean color halo on edges</span></label>
+      <div class="row gap">
+        <button class="btn primary grow" id="btnRemoveBg" data-i18n="remove_bg">Remove background</button>
+        <button class="btn ghost" id="btnResetImg" data-i18n="reset" data-i18n-title="reset_title" title="Restore the original image">Reset</button>
+      </div>
+      <p class="hint" data-i18n-html="bg_hint">Sliders update live after removing. Use the <b>magic eraser (W)</b> on leftover patches, like gaps between arms.</p>
+    </section>
+
+    <section class="sec" id="secScan">
+      <h3 data-i18n="sec_detect">Detection</h3>
+      <div class="field">
+        <div class="field-head"><label for="gap" data-i18n="gap">Merge gap</label><output id="gapOut"></output></div>
+        <input type="range" id="gap" min="0" max="80" step="1">
+      </div>
+      <div class="field">
+        <div class="field-head"><label for="split" data-i18n="split" data-i18n-title="split_title">Separate touching</label><output id="splitOut"></output></div>
+        <input type="range" id="split" min="0" max="12" step="1">
+      </div>
+      <div class="field">
+        <div class="field-head"><label for="alphaThr" data-i18n="alpha">Alpha threshold</label><output id="alphaThrOut"></output></div>
+        <input type="range" id="alphaThr" min="0" max="250" step="1">
+      </div>
+      <div class="row">
+        <label class="lbl" for="minSpeck" data-i18n="specks">Ignore specks under</label>
+        <input type="number" id="minSpeck" min="0" step="1" class="num"><span class="unit">px²</span>
+      </div>
+      <label class="check"><input type="checkbox" id="absorb"> <span data-i18n="absorb">Keep inner bits with their sprite</span></label>
+    </section>
+
+    <section class="sec hidden" id="secGrid">
+      <h3 data-i18n="sec_grid">Grid</h3>
+      <div class="seg small" id="gridBySeg">
+        <button data-by="count" class="on" data-i18n="by_count">By count</button>
+        <button data-by="size" data-i18n="by_size">By cell size</button>
+      </div>
+      <div class="grid2 by-count">
+        <label><span data-i18n="cols">Columns</span><input type="number" id="gCols" min="1" class="num"></label>
+        <label><span data-i18n="rows">Rows</span><input type="number" id="gRows" min="1" class="num"></label>
+      </div>
+      <div class="grid2 by-size hidden">
+        <label><span data-i18n="cell_w">Cell W</span><input type="number" id="gCw" min="1" class="num"></label>
+        <label><span data-i18n="cell_h">Cell H</span><input type="number" id="gCh" min="1" class="num"></label>
+      </div>
+      <div class="grid2">
+        <label><span data-i18n="off_x">Offset X</span><input type="number" id="gOx" min="0" class="num"></label>
+        <label><span data-i18n="off_y">Offset Y</span><input type="number" id="gOy" min="0" class="num"></label>
+        <label><span data-i18n="sp_x">Spacing X</span><input type="number" id="gSx" min="0" class="num"></label>
+        <label><span data-i18n="sp_y">Spacing Y</span><input type="number" id="gSy" min="0" class="num"></label>
+      </div>
+      <label class="check"><input type="checkbox" id="gSkipEmpty"> <span data-i18n="skip_empty">Skip empty cells</span></label>
+    </section>
+
+    <section class="sec">
+      <h3 data-i18n="sec_manual">Manual cuts</h3>
+      <label class="check"><input type="checkbox" id="carve"> <span data-i18n="carve">Manual shapes take pixels from auto sprites</span></label>
+      <ul class="tips">
+        <li data-i18n-html="tip1"><kbd>R</kbd> <kbd>P</kbd> <kbd>L</kbd> draw a new sprite shape</li>
+        <li data-i18n-html="tip2">Hold <kbd>Shift</kbd> while finishing to <b>add</b> to the selected sprite</li>
+        <li data-i18n-html="tip3">Hold <kbd>Alt</kbd> while finishing to <b>cut away</b> from it</li>
+        <li data-i18n-html="tip4">Select a shape to drag its points; double-click an edge to add a point, right-click a point to remove it</li>
+      </ul>
+    </section>
+
+    <section class="sec">
+      <h3 data-i18n="sec_filter">Size filter</h3>
+      <div class="grid2">
+        <label><span data-i18n="min_w">Min W</span><input type="number" id="fMinW" min="0" class="num" placeholder="–"></label>
+        <label><span data-i18n="min_h">Min H</span><input type="number" id="fMinH" min="0" class="num" placeholder="–"></label>
+        <label><span data-i18n="max_w">Max W</span><input type="number" id="fMaxW" min="0" class="num" placeholder="–"></label>
+        <label><span data-i18n="max_h">Max H</span><input type="number" id="fMaxH" min="0" class="num" placeholder="–"></label>
+      </div>
+    </section>
+
+    <section class="sec">
+      <h3 data-i18n="sec_export">Export</h3>
+      <div class="row">
+        <label class="lbl" for="expFormat" data-i18n="format">Format</label>
+        <select id="expFormat">
+          <option value="png">PNG</option>
+          <option value="webp">WEBP</option>
+        </select>
+        <label class="lbl" for="expPrefix" data-i18n="name">Name</label>
+        <input type="text" id="expPrefix" class="txt" spellcheck="false">
+      </div>
+      <label class="check"><input type="checkbox" id="expTrim"> <span data-i18n="trim">Trim transparent edges</span></label>
+      <label class="check"><input type="checkbox" id="expPixel"> <span data-i18n="pixel">Pixel-art scaling (sharp pixels)</span></label>
+      <label class="check"><input type="checkbox" id="expJson"> <span data-i18n="json">Add positions JSON to ZIP</span></label>
+
+      <h4 class="sub"><svg viewBox="0 0 24 24" class="ic"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"/></svg><span data-i18n="regular">Regular download</span></h4>
+      <div class="row">
+        <label class="lbl" for="expScale" data-i18n="scale">Scale</label>
+        <select id="expScale">
+          <option value="1">1×</option><option value="2">2×</option><option value="3">3×</option><option value="4">4×</option>
+        </select>
+        <label class="lbl" for="expPad" data-i18n="padding">Padding</label>
+        <input type="number" id="expPad" min="0" class="num">
+      </div>
+
+      <h4 class="sub"><svg viewBox="0 0 24 24" class="ic"><path d="M21.5 3.5 2.8 10.7c-.9.4-.9 1.6 0 1.9l4.6 1.6 1.8 5.6c.2.7 1.1.9 1.6.4l2.6-2.5 4.9 3.6c.6.4 1.4.1 1.6-.6L22.9 4.8c.2-.9-.6-1.6-1.4-1.3z"/><path d="m7.4 14.2 9.8-6.7-6.9 7.9"/></svg><span data-i18n="tg_sticker">Telegram sticker</span></h4>
+      <div class="row">
+        <label class="lbl" for="tgShape" data-i18n="canvas">Canvas</label>
+        <select id="tgShape">
+          <option value="square" data-i18n="tg_square">512×512 square</option>
+          <option value="fit" data-i18n="tg_fit">Longest side 512</option>
+        </select>
+      </div>
+      <div class="field">
+        <div class="field-head"><label for="tgOutline" data-i18n="outline">Outline</label><output id="tgOutlineOut"></output></div>
+        <div class="row tight">
+          <input type="range" id="tgOutline" min="0" max="24" step="1">
+          <input type="color" id="tgOutlineColor" value="#ffffff" data-i18n-title="outline_color" title="Outline color">
+        </div>
+      </div>
+      <div class="row">
+        <label class="lbl" for="tgMargin" data-i18n="margin">Margin</label>
+        <input type="number" id="tgMargin" min="0" max="200" class="num"><span class="unit" data-i18n="margin_unit">px inside 512</span>
+      </div>
+      <div class="tg-preview hidden" id="tgPreview">
+        <canvas id="tgPreviewCanvas"></canvas>
+        <span id="tgPreviewLabel"></span>
+      </div>
+    </section>
+  </aside>
+
+  <!-- ───────── Stage ───────── -->
+  <main class="stage" id="stage">
+    <canvas id="view"></canvas>
+
+    <div class="empty" id="empty">
+      <div class="empty-card">
+        <svg viewBox="0 0 24 24" class="ic big"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><path d="M14 17.5h7M17.5 14v7"/></svg>
+        <h2 data-i18n="empty_title">Drop a sprite sheet</h2>
+        <p data-i18n="empty_text">PNG with transparency works best. Plain backgrounds (white, green…) are removed for you.</p>
+        <div class="row center gap">
+          <button class="btn primary" id="btnOpen2" data-i18n="choose">Choose image</button>
+          <button class="btn ghost hidden" id="btnSample" data-i18n="sample">Try the example</button>
+        </div>
+        <p class="hint" data-i18n-html="paste_hint">or paste with <kbd>Ctrl</kbd>+<kbd>V</kbd></p>
+      </div>
+    </div>
+
+    <div class="banner hidden" id="banner">
+      <span id="bannerText"></span>
+      <button class="btn sm primary" id="bannerAction"></button>
+      <button class="icon-btn sm" id="bannerClose" data-i18n-title="dismiss" title="Dismiss"><svg viewBox="0 0 24 24" class="ic"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+    </div>
+
+    <div class="drop-overlay hidden" id="dropOverlay"><div data-i18n="drop_here">Drop image to load</div></div>
+
+    <div class="zoombar">
+      <button class="icon-btn sm" id="btnZoomOut" data-i18n-title="zoom_out" title="Zoom out (−)"><svg viewBox="0 0 24 24" class="ic"><path d="M5 12h14"/></svg></button>
+      <button class="zoom-val" id="zoomVal" data-i18n-title="zoom_actual" title="Actual size (0)">100%</button>
+      <button class="icon-btn sm" id="btnZoomIn" data-i18n-title="zoom_in" title="Zoom in (+)"><svg viewBox="0 0 24 24" class="ic"><path d="M5 12h14M12 5v14"/></svg></button>
+      <button class="icon-btn sm" id="btnFit" data-i18n-title="fit" title="Fit to screen (F)"><svg viewBox="0 0 24 24" class="ic"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button>
+    </div>
+
+    <div class="statusbar">
+      <span id="stHint"></span>
+      <span class="spacer"></span>
+      <span id="stPixel"></span>
+      <span id="stPos"></span>
+      <span id="stSize"></span>
+    </div>
+  </main>
+
+  <!-- ───────── Sprites panel ───────── -->
+  <aside class="panel sprites" id="spritesPanel">
+    <div class="sp-head">
+      <h3><span data-i18n="sprites">Sprites</span> <span class="count" id="spriteCount">0</span></h3>
+      <div class="spacer"></div>
+      <select id="sortMode" data-i18n-title="order" title="Order">
+        <option value="rows" data-i18n="sort_rows">Rows</option>
+        <option value="flat" data-i18n="sort_flat">Reading order</option>
+        <option value="size" data-i18n="sort_size">Largest first</option>
+      </select>
+      <button class="btn primary sm" id="btnDownloadAll" data-i18n-title="dl_all_title" title="Download every sprite as a ZIP">
+        <svg viewBox="0 0 24 24" class="ic"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"/></svg><span data-i18n="all">All</span>
+      </button>
+      <button class="btn sm tg" id="btnDownloadAllTg" data-i18n-title="dl_all_tg_title" title="Download every sprite as a Telegram sticker (512 px) ZIP"><svg viewBox="0 0 24 24" class="ic"><path d="M21.5 3.5 2.8 10.7c-.9.4-.9 1.6 0 1.9l4.6 1.6 1.8 5.6c.2.7 1.1.9 1.6.4l2.6-2.5 4.9 3.6c.6.4 1.4.1 1.6-.6L22.9 4.8c.2-.9-.6-1.6-1.4-1.3z"/><path d="m7.4 14.2 9.8-6.7-6.9 7.9"/></svg><span data-i18n="all">All</span></button>
+    </div>
+
+    <div class="selbar hidden" id="selbar">
+      <div class="sel-preview" id="selPreview"><canvas id="selCanvas"></canvas></div>
+      <div class="sel-info">
+        <input type="text" class="txt name-input" id="selName" spellcheck="false">
+        <div class="sel-meta" id="selMeta"></div>
+        <div class="sel-actions">
+          <button class="btn sm" id="btnSelDownload" data-i18n-title="dl_sel_title" title="Download selected"><svg viewBox="0 0 24 24" class="ic"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"/></svg><span id="selDlLabel">PNG</span></button>
+          <button class="btn sm tg" id="btnSelTelegram" data-i18n-title="dl_sel_tg_title" title="Download as Telegram sticker (512 px)"><svg viewBox="0 0 24 24" class="ic"><path d="M21.5 3.5 2.8 10.7c-.9.4-.9 1.6 0 1.9l4.6 1.6 1.8 5.6c.2.7 1.1.9 1.6.4l2.6-2.5 4.9 3.6c.6.4 1.4.1 1.6-.6L22.9 4.8c.2-.9-.6-1.6-1.4-1.3z"/><path d="m7.4 14.2 9.8-6.7-6.9 7.9"/></svg><span id="selTgLabel">Telegram</span></button>
+          <button class="btn sm" id="btnMerge" data-i18n="merge" data-i18n-title="merge_title" title="Merge selected into one sprite (M)">Merge</button>
+          <button class="btn sm" id="btnSplit" data-i18n="split_btn" data-i18n-title="split_btn_title" title="Split into separate parts (U)">Split</button>
+          <button class="btn sm danger" id="btnDelete" data-i18n-title="delete_title" title="Remove (Delete)"><svg viewBox="0 0 24 24" class="ic"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></svg></button>
+        </div>
+      </div>
+    </div>
+
+    <div class="sp-list" id="spriteList"></div>
+    <div class="sp-foot" id="spFoot"></div>
+  </aside>
+</div>
+
+<div class="toasts" id="toasts"></div>
+
+<dialog id="helpDlg">
+  <h3 data-i18n="shortcuts">Shortcuts</h3>
+  <div class="keys">
+    <div><kbd>V</kbd> <span data-i18n="k_select">Select / edit</span></div><div><kbd>R</kbd> <span data-i18n="k_rect">Rectangle cut</span></div>
+    <div><kbd>P</kbd> <span data-i18n="k_poly">Polygon cut</span></div><div><kbd>L</kbd> <span data-i18n="k_lasso">Lasso cut</span></div>
+    <div><kbd>W</kbd> <span data-i18n="k_wand">Magic eraser</span></div><div><kbd>I</kbd> <span data-i18n="k_pick">Pick bg color</span></div>
+    <div><kbd>H</kbd> / <kbd>Space</kbd> <span data-i18n="k_pan">Pan</span></div><div><kbd>F</kbd> <span data-i18n="k_fit">Fit</span> · <kbd>0</kbd> 100%</div>
+    <div><kbd>M</kbd> <span data-i18n="k_merge">Merge selected</span></div><div><kbd>U</kbd> <span data-i18n="k_split">Split selected</span></div>
+    <div><kbd>Del</kbd> <span data-i18n="k_del">Remove selected</span></div><div><kbd>Ctrl</kbd>+<kbd>A</kbd> <span data-i18n="k_all">Select all</span></div>
+    <div><kbd>Ctrl</kbd>+<kbd>Z</kbd> <span data-i18n="k_undo">Undo</span></div><div><kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>Z</kbd> <span data-i18n="k_redo">Redo</span></div>
+    <div><kbd>Enter</kbd> <span data-i18n="k_finish">Finish polygon</span></div><div><kbd>Esc</kbd> <span data-i18n="k_cancel">Cancel / deselect</span></div>
+    <div><kbd>Shift</kbd>+<span data-i18n="k_click">click</span> <span data-i18n="k_multi">Multi-select</span></div><div><kbd>Ctrl</kbd>+<kbd>S</kbd> <span data-i18n="k_dl">Download all</span></div>
+  </div>
+  <form method="dialog"><button class="btn primary" data-i18n="got_it">Got it</button></form>
+</dialog>
+
+<input type="file" id="fileInput" accept="image/*" hidden>
+
+<script src="js/i18n.js"></script>
+<script src="js/imageops.js"></script>
+<script src="js/zip.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

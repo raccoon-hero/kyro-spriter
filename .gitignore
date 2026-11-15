@@ -1,0 +1,12 @@
+# Local editor / tool settings
+.claude/
+.vscode/
+.idea/
+
+# Personal sample artwork (not part of the public repo)
+samples/
+
+# OS junk
+.DS_Store
+Thumbs.db
+desktop.ini
